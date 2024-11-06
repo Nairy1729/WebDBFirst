@@ -12,11 +12,30 @@ namespace WebDBFirst.Repositories
             _context = context;
         }
 
-        public List<TblDeparment> GetAllDepartments()
+        public List<DepartmentDto> GetAllDepartments()
         {
-            var departments = _context.TblDeparments.ToList();
-            return departments.Count > 0 ? departments : null;
+            var departments = _context.TblDeparments
+                .Select(d => new DepartmentDto
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    DepartmentHead = d.DepartmentHead,
+                    Employees = d.TblEmployees.Select(e => new EmployeeDto
+                    {
+                        EmployeeId = e.EmployeeId,
+                        Name = e.Name,
+                        Gender = e.Gender,
+                        Designation = e.Designation,
+                        Email = e.Email,
+                        Salary = e.Salary,
+                        DepartmentName = e.Department.Name
+                    }).ToList()
+                })
+                .ToList();
+
+            return departments;
         }
+
 
         public int AddNewDepartment(TblDeparment department)
         {

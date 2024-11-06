@@ -19,7 +19,7 @@ namespace WebDBFirst.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<TblDeparment> departments = _service.GetAllDepartments();
+            List<DepartmentDto> departments = _service.GetAllDepartments();
             return Ok(departments);
         }
 

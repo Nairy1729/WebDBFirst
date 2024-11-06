@@ -19,7 +19,7 @@ namespace WebDBFirst.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<TblEmployee> employees = _service.GetAllEmployees();
+            List<EmployeeDto> employees = _service.GetAllEmployees();
             return Ok(employees);
         }
 

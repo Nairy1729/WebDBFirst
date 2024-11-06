@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace WebDBFirst.Models
 {
@@ -13,6 +14,7 @@ namespace WebDBFirst.Models
         public decimal Salary { get; set; }
         public int DepartmentId { get; set; }
 
+        
         public virtual TblDeparment Department { get; set; } = null!;
     }
 }

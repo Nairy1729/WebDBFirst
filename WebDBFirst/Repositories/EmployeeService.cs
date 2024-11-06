@@ -12,11 +12,24 @@ namespace WebDBFirst.Repositories
             _context = context;
         }
 
-        public List<TblEmployee> GetAllEmployees()
+        public List<EmployeeDto> GetAllEmployees()
         {
-            var employees = _context.TblEmployees.ToList();
-            return employees.Count > 0 ? employees : null;
+            var employees = _context.TblEmployees
+                .Select(e => new EmployeeDto
+                {
+                    EmployeeId = e.EmployeeId,
+                    Name = e.Name,
+                    Gender = e.Gender,
+                    Designation = e.Designation,
+                    Email = e.Email,
+                    Salary = e.Salary,
+                    DepartmentName = e.Department.Name
+                })
+                .ToList();
+
+            return employees;
         }
+
 
         public TblEmployee GetEmployeeById(int id)
         {
