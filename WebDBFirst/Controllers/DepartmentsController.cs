@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using WebDBFirst.Models;
 using WebDBFirst.Repositories;
 
@@ -26,7 +27,7 @@ namespace WebDBFirst.Controllers
         [HttpGet("{id}")]
         public IActionResult GetDepartmentById(int id)
         {
-            TblDeparment department = _service.GetDepartmentById(id);
+            DepartmentDto department = _service.GetDepartmentById(id);
             if (department == null)
             {
                 return NotFound($"Department with ID {id} not found.");
@@ -35,20 +36,20 @@ namespace WebDBFirst.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(TblDeparment department)
+        public IActionResult Post(DepartmentDto departmentDto)
         {
-            int result = _service.AddNewDepartment(department);
+            int result = _service.AddNewDepartment(departmentDto);
             if (result > 0)
             {
-                return CreatedAtAction(nameof(GetDepartmentById), new { id = result }, department);
+                return CreatedAtAction(nameof(GetDepartmentById), new { id = result }, departmentDto);
             }
             return BadRequest("Error creating department.");
         }
 
         [HttpPut]
-        public IActionResult Put(TblDeparment department)
+        public IActionResult Put(DepartmentDto departmentDto)
         {
-            string result = _service.UpdateDepartment(department);
+            string result = _service.UpdateDepartment(departmentDto);
             if (result.Contains("success"))
             {
                 return Ok(result);

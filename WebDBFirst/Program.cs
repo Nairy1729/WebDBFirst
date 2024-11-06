@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebDBFirst.Mappings;
 using WebDBFirst.Models;
 using WebDBFirst.Repositories;
 
@@ -9,6 +10,7 @@ namespace WebDBFirst
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             // Add services to the container.
 

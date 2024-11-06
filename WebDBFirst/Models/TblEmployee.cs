@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -17,4 +18,5 @@ namespace WebDBFirst.Models
         
         public virtual TblDeparment Department { get; set; } = null!;
     }
+    public record EmployeeDto (int EmployeeId , string Name , string Designation , string Email , decimal Salary);
 }

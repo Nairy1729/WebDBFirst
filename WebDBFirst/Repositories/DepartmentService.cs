@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WebDBFirst.Models;
 
 namespace WebDBFirst.Repositories
@@ -6,43 +7,35 @@ namespace WebDBFirst.Repositories
     public class DepartmentService : IDepartmentService
     {
         private readonly API_CF_DemoContext _context;
+        private readonly IMapper _mapper;
 
-        public DepartmentService(API_CF_DemoContext context)
+        public DepartmentService(API_CF_DemoContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
+
+
 
         public List<DepartmentDto> GetAllDepartments()
         {
             var departments = _context.TblDeparments
-                .Select(d => new DepartmentDto
-                {
-                    Id = d.Id,
-                    Name = d.Name,
-                    DepartmentHead = d.DepartmentHead,
-                    Employees = d.TblEmployees.Select(e => new EmployeeDto
-                    {
-                        EmployeeId = e.EmployeeId,
-                        Name = e.Name,
-                        Gender = e.Gender,
-                        Designation = e.Designation,
-                        Email = e.Email,
-                        Salary = e.Salary,
-                        DepartmentName = e.Department.Name
-                    }).ToList()
-                })
+                .Include(d => d.TblEmployees) // Include employees to avoid lazy loading
                 .ToList();
 
-            return departments;
+            // Use AutoMapper to map the list of TblDeparment entities to List<DepartmentDto>
+            return _mapper.Map<List<DepartmentDto>>(departments);
         }
 
 
-        public int AddNewDepartment(TblDeparment department)
+        public int AddNewDepartment(DepartmentDto departmentDto)
         {
             try
             {
-                if (department != null)
+                if (departmentDto != null)
                 {
+                    // Map DepartmentDto to TblDeparment for entity operations
+                    var department = _mapper.Map<TblDeparment>(departmentDto);
                     _context.TblDeparments.Add(department);
                     _context.SaveChanges();
                     return department.Id;
@@ -71,20 +64,28 @@ namespace WebDBFirst.Repositories
             return "ID should not be zero.";
         }
 
-        public TblDeparment GetDepartmentById(int id)
+        public DepartmentDto GetDepartmentById(int id)
         {
             if (id != 0)
             {
-                return _context.TblDeparments.FirstOrDefault(x => x.Id == id);
+                var department = _context.TblDeparments
+                    .Include(d => d.TblEmployees) // Include employees for related data
+                    .FirstOrDefault(x => x.Id == id);
+
+                // Map TblDeparment entity to DepartmentDto
+                return department != null ? _mapper.Map<DepartmentDto>(department) : null;
             }
             return null;
         }
 
-        public string UpdateDepartment(TblDeparment department)
+        public string UpdateDepartment(DepartmentDto departmentDto)
         {
+            var department = _mapper.Map<TblDeparment>(departmentDto);
             var existingDepartment = _context.TblDeparments.FirstOrDefault(x => x.Id == department.Id);
+
             if (existingDepartment != null)
             {
+                // Update properties of the existing department
                 existingDepartment.Name = department.Name;
                 existingDepartment.DepartmentHead = department.DepartmentHead;
 

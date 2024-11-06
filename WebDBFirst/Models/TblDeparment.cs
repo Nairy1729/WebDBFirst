@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace WebDBFirst.Models
 {
@@ -16,4 +17,22 @@ namespace WebDBFirst.Models
 
         public virtual ICollection<TblEmployee> TblEmployees { get; set; }
     }
+    public record DepartmentDto
+    {
+        public DepartmentDto() { }
+
+        public DepartmentDto(int Id, string Name, string DepartmentHead, List<EmployeeDto> Employees)
+        {
+            this.Id = Id;
+            this.Name = Name;
+            this.DepartmentHead = DepartmentHead;
+            this.Employees = Employees;
+        }
+
+        public int Id { get; init; }
+        public string Name { get; init; }
+        public string DepartmentHead { get; init; }
+        public List<EmployeeDto> Employees { get; init; } = new List<EmployeeDto>();
+    }
+
 }

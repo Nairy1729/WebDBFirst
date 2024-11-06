@@ -26,7 +26,7 @@ namespace WebDBFirst.Controllers
         [HttpGet("{id}")]
         public IActionResult GetEmployeeById(int id)
         {
-            TblEmployee employee = _service.GetEmployeeById(id);
+            EmployeeDto employee = _service.GetEmployeeById(id);
             if (employee != null)
             {
                 return Ok(employee);
@@ -35,20 +35,20 @@ namespace WebDBFirst.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(TblEmployee employee)
+        public IActionResult Post(EmployeeDto employeeDto)
         {
-            int result = _service.AddNewEmployee(employee);
+            int result = _service.AddNewEmployee(employeeDto);
             if (result > 0)
             {
-                return Ok($"Employee with ID {result} created successfully.");
+                return CreatedAtAction(nameof(GetEmployeeById), new { id = result }, employeeDto);
             }
             return BadRequest("Failed to create employee.");
         }
 
         [HttpPut]
-        public IActionResult Put(TblEmployee employee)
+        public IActionResult Put(EmployeeDto employeeDto)
         {
-            string result = _service.UpdateEmployee(employee);
+            string result = _service.UpdateEmployee(employeeDto);
             if (result.Contains("successfully"))
             {
                 return Ok(result);
@@ -64,7 +64,7 @@ namespace WebDBFirst.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return NotFound(result);
         }
     }
 }

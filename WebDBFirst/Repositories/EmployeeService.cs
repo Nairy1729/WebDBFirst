@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WebDBFirst.Models;
 
 namespace WebDBFirst.Repositories
@@ -6,46 +7,46 @@ namespace WebDBFirst.Repositories
     public class EmployeeService : IEmployeeService
     {
         private readonly API_CF_DemoContext _context;
+        private readonly IMapper _mapper;
 
-        public EmployeeService(API_CF_DemoContext context)
+        public EmployeeService(API_CF_DemoContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public List<EmployeeDto> GetAllEmployees()
         {
             var employees = _context.TblEmployees
-                .Select(e => new EmployeeDto
-                {
-                    EmployeeId = e.EmployeeId,
-                    Name = e.Name,
-                    Gender = e.Gender,
-                    Designation = e.Designation,
-                    Email = e.Email,
-                    Salary = e.Salary,
-                    DepartmentName = e.Department.Name
-                })
+                .Include(e => e.Department) // Include Department to access DepartmentName
                 .ToList();
 
-            return employees;
+            // Map list of TblEmployee entities to list of EmployeeDto
+            return _mapper.Map<List<EmployeeDto>>(employees);
         }
 
-
-        public TblEmployee GetEmployeeById(int id)
+        public EmployeeDto GetEmployeeById(int id)
         {
             if (id != 0)
             {
-                return _context.TblEmployees.FirstOrDefault(e => e.EmployeeId == id);
+                var employee = _context.TblEmployees
+                    .Include(e => e.Department)
+                    .FirstOrDefault(e => e.EmployeeId == id);
+
+                // Map TblEmployee entity to EmployeeDto
+                return employee != null ? _mapper.Map<EmployeeDto>(employee) : null;
             }
             return null;
         }
 
-        public int AddNewEmployee(TblEmployee employee)
+        public int AddNewEmployee(EmployeeDto employeeDto)
         {
             try
             {
-                if (employee != null)
+                if (employeeDto != null)
                 {
+                    // Map EmployeeDto to TblEmployee for adding to the database
+                    var employee = _mapper.Map<TblEmployee>(employeeDto);
                     _context.TblEmployees.Add(employee);
                     _context.SaveChanges();
                     return employee.EmployeeId;
@@ -74,11 +75,14 @@ namespace WebDBFirst.Repositories
             return "ID should not be zero.";
         }
 
-        public string UpdateEmployee(TblEmployee employee)
+        public string UpdateEmployee(EmployeeDto employeeDto)
         {
+            var employee = _mapper.Map<TblEmployee>(employeeDto);
             var existingEmployee = _context.TblEmployees.FirstOrDefault(e => e.EmployeeId == employee.EmployeeId);
+
             if (existingEmployee != null)
             {
+                // Update properties of the existing employee
                 existingEmployee.Name = employee.Name;
                 existingEmployee.Gender = employee.Gender;
                 existingEmployee.Designation = employee.Designation;

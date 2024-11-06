@@ -5,9 +5,9 @@ namespace WebDBFirst.Repositories
     public interface IDepartmentService
     {
         List<DepartmentDto> GetAllDepartments();
-        TblDeparment GetDepartmentById(int id);
-        int AddNewDepartment(TblDeparment department);
-        string UpdateDepartment(TblDeparment department);
+        DepartmentDto GetDepartmentById(int id);
+        int AddNewDepartment(DepartmentDto departmentDto);
+        string UpdateDepartment(DepartmentDto departmentDto);
         string DeleteDepartment(int id);
     }
 }

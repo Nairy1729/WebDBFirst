@@ -5,9 +5,9 @@ namespace WebDBFirst.Repositories
     public interface IEmployeeService
     {
         List<EmployeeDto> GetAllEmployees();
-        TblEmployee GetEmployeeById(int id);
-        int AddNewEmployee(TblEmployee employee);
+        EmployeeDto GetEmployeeById(int id);
+        int AddNewEmployee(EmployeeDto employeeDto);
+        string UpdateEmployee(EmployeeDto employeeDto);
         string DeleteEmployee(int id);
-        string UpdateEmployee(TblEmployee employee);
     }
 }
